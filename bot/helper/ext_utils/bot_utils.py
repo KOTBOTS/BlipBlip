@@ -103,8 +103,8 @@ def get_progress_bar_string(status):
     p = 0 if total == 0 else round(completed * 100 / total)
     p = min(max(p, 0), 100)
     cFull = p // 9
-    p_str = '■' * cFull
-    p_str += '□' * (11 - cFull)
+    p_str = '●' * cFull
+    p_str += '○' * (11 - cFull)
     p_str = f"[{p_str}]"
     return p_str
 
@@ -128,25 +128,26 @@ def get_readable_message():
                 MirrorStatus.STATUS_EXTRACTING,
                 MirrorStatus.STATUS_SPLITTING,
             ]:
-                msg += f"\n{get_progress_bar_string(download)} {download.progress()}"
+                msg += f"\n<code>{get_progress_bar_string(download)}</code> - <i>{download.progress()}</i>"
                 if download.status() == MirrorStatus.STATUS_CLONING:
-                    msg += f"\n<b>Cloned:</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
+                    msg += f"\n<b>Cloned:</b> <code>{get_readable_file_size(download.processed_bytes())}</code> / <code>{download.size()}</code>"
                 elif download.status() == MirrorStatus.STATUS_UPLOADING:
-                    msg += f"\n<b>Uploaded:</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
+                    msg += f"\n<b>Uploaded:</b> <code>{get_readable_file_size(download.processed_bytes())}</code> / <code>{download.size()}</code>"
                 else:
-                    msg += f"\n<b>Downloaded:</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
-                msg += f"\n<b>Speed:</b> {download.speed()} | <b>ETA:</b> {download.eta()}"
+                    msg += f"\n<b>Downloaded:</b> <code>{get_readable_file_size(download.processed_bytes())}</code> / <code>{download.size()}</code>"
+                msg += f"\n<b>Speed:</b> <code>{download.speed()}</code>"
+                msg += f"\n<b>ETA:</b> <code>{download.eta()}</code>"
                 try:
-                    msg += f"\n<b>Seeders:</b> {download.aria_download().num_seeders}" \
-                           f" | <b>Peers:</b> {download.aria_download().connections}"
+                    msg += f"\n<b>Seeders:</b> <code>{download.aria_download().num_seeders}</code>"
+                    msg += f"\n<b>Peers:</b> <code>{download.aria_download().connections}</code>"
                 except:
                     pass
                 try:
-                    msg += f"\n<b>Seeders:</b> {download.torrent_info().num_seeds}" \
-                           f" | <b>Leechers:</b> {download.torrent_info().num_leechs}"
+                    msg += f"\n<b>Seeders:</b> <code>{download.torrent_info().num_seeds}</code>"
+                    msg += f"\n<b>Leechers:</b> <code>{download.torrent_info().num_leechs}</code>"
                 except:
                     pass
-                msg += f"\n<code>/{BotCommands.CancelMirror} {download.gid()}</code>"
+                msg += f"\n<b>Cancel:</b> <code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             msg += "\n\n"
             if STATUS_LIMIT is not None and index == STATUS_LIMIT:
                 break
