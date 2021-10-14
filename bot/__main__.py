@@ -5,7 +5,7 @@ import asyncio
 
 from pyrogram import idle
 from sys import executable
-from telegram import ParseMode
+from quoters import Quote
 
 from telegram import ParseMode
 from telegram.ext import CommandHandler
