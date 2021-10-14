@@ -5,6 +5,7 @@ import asyncio
 
 from pyrogram import idle
 from sys import executable
+from telegram import ParseMode
 
 from telegram import ParseMode
 from telegram.ext import CommandHandler
@@ -31,15 +32,15 @@ def stats(update, context):
     cpuUsage = psutil.cpu_percent(interval=0.5)
     memory = psutil.virtual_memory().percent
     disk = psutil.disk_usage('/').percent
-    stats = f'<b>Bot Uptime:</b> <code>{currentTime}</code>\n' \
-            f'<b>Total Disk Space:</b> <code>{total}</code>\n' \
-            f'<b>Used:</b> <code>{used}</code>' \
-            f'<b>Free:</b> <code>{free}</code>\n\n' \
-            f'<b>Upload:</b> <code>{sent}</code>\n' \
-            f'<b>Download:</b> <code>{recv}</code>\n\n' \
-            f'<b>CPU:</b> <code>{cpuUsage}%</code>' \
-            f'<b>RAM:</b> <code>{memory}%</code>' \
-            f'<b>DISK:</b> <code>{disk}%</code>'
+    stats = f'⏰ <b>Bot Uptime:</b> {currentTime}\n' \
+        f'💾 <b>Total disk space:</b> {total}\n' \
+        f'📀 <b>Used:</b> {used}  ' \
+        f'💿 <b>Free:</b> {free}\n\n' \
+        f'🔼 <b>Uploaded:</b> {sent}\n' \
+        f'🔽 <b>Downloaded:</b> {recv}\n\n' \
+        f'🖥️ <b>CPU:</b> {cpuUsage}%\n' \
+        f'🎮 <b>RAM:</b> {memory}%\n' \
+        f'💽 <b>DISK:</b> {disk}%'
     sendMessage(stats, context.bot, update)
 
 
@@ -205,6 +206,7 @@ botcmds = [
 
 def main():
     fs_utils.start_cleanup()
+    quo_te = Quote.print()
     if IS_VPS:
         asyncio.get_event_loop().run_until_complete(start_server_async(PORT))
     # Check if the bot is restarting
@@ -213,15 +215,13 @@ def main():
             chat_id, msg_id = map(int, f)
         bot.edit_message_text("Restarted successfully!", chat_id, msg_id)
         os.remove(".restartmsg")
-    elif OWNER_ID:
-        try:
-            text = "<b>Bot Restarted!</b>"
-            bot.sendMessage(chat_id=OWNER_ID, text=text, parse_mode=ParseMode.HTML)
-            if AUTHORIZED_CHATS:
-                for i in AUTHORIZED_CHATS:
-                    bot.sendMessage(chat_id=i, text=text, parse_mode=ParseMode.HTML)
-        except Exception as e:
-            LOGGER.warning(e)
+    elif AUTHORIZED_CHATS:
+        for i in AUTHORIZED_CHATS:
+            try:
+                text = f"<code>{quo_te}</code>\n\nBot Rebooted!♻️"
+                bot.sendMessage(chat_id=i, text=text, parse_mode=ParseMode.HTML)
+            except Exception as e:
+                LOGGER.warning(e)
     # bot.set_my_commands(botcmds)
     start_handler = CommandHandler(BotCommands.StartCommand, start, run_async=True)
     ping_handler = CommandHandler(BotCommands.PingCommand, ping,
